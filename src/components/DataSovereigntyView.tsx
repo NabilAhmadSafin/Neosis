@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import {
-  Database,
   Download,
   Upload,
   RotateCcw,
@@ -76,84 +75,84 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
-      <div className="pb-5 border-b border-slate-200">
-        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+      <div className="pb-5 border-b border-slate-800">
+        <h1 className="text-2xl font-semibold text-slate-100 tracking-tight">
           Local IndexedDB Storage &amp; Data Sovereignty
         </h1>
-        <p className="text-xs text-slate-500 mt-1">
+        <p className="text-xs text-slate-400 mt-1">
           All mind maps, spaced repetition schedules, and active recall blurt sessions are stored
-          locally in your browser’s <code className="font-mono">noesis_study_db</code> IndexedDB
-          database with zero external account requirement.
+          locally in your browser’s <code className="font-mono text-slate-300">noesis_study_db</code>{' '}
+          IndexedDB database with zero external account requirement.
         </p>
       </div>
 
       {statusMessage && (
-        <div className="flex items-center gap-2 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-medium text-emerald-900">
-          <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+        <div className="flex items-center gap-2 p-4 bg-emerald-950/60 border border-emerald-800/70 rounded-xl text-xs font-medium text-emerald-200">
+          <Check className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{statusMessage}</span>
         </div>
       )}
 
       {errorMessage && (
-        <div className="flex items-center gap-2 p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs font-medium text-rose-900">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+        <div className="flex items-center gap-2 p-4 bg-rose-950/60 border border-rose-800/70 rounded-xl text-xs font-medium text-rose-200">
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
           <span>{errorMessage}</span>
         </div>
       )}
 
       {/* Object Store Inventory Table */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+      <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <HardDrive className="w-4 h-4 text-slate-500" />
-            <h2 className="text-sm font-semibold text-slate-900">
+            <HardDrive className="w-4 h-4 text-slate-400" />
+            <h2 className="text-sm font-semibold text-slate-100">
               IndexedDB Object Store Inventory (<code className="font-mono">noesis_study_db</code>)
             </h2>
           </div>
-          <span className="text-xs text-emerald-700 font-medium">● Persistent Local Storage</span>
+          <span className="text-xs text-emerald-400 font-medium">● Persistent Local Storage</span>
         </div>
 
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-slate-200 bg-slate-50/70 text-[11px] font-semibold text-slate-500">
+            <tr className="border-b border-slate-800 bg-slate-950/60 text-[11px] font-semibold text-slate-400">
               <th className="py-3 px-6">Object Store</th>
               <th className="py-3 px-6">Indexed Keys</th>
               <th className="py-3 px-6 text-right">Records Stored</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 text-xs">
+          <tbody className="divide-y divide-slate-800 text-xs">
             <tr>
-              <td className="py-3.5 px-6 font-mono font-medium text-slate-900">topics</td>
-              <td className="py-3.5 px-6 font-mono text-slate-500">id (primary)</td>
-              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-800">
+              <td className="py-3.5 px-6 font-mono font-medium text-slate-200">topics</td>
+              <td className="py-3.5 px-6 font-mono text-slate-400">id (primary)</td>
+              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-200">
                 {snapshot.topics.length}
               </td>
             </tr>
             <tr>
-              <td className="py-3.5 px-6 font-mono font-medium text-slate-900">mindmaps</td>
-              <td className="py-3.5 px-6 font-mono text-slate-500">id, topicId</td>
-              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-800">
+              <td className="py-3.5 px-6 font-mono font-medium text-slate-200">mindmaps</td>
+              <td className="py-3.5 px-6 font-mono text-slate-400">id, topicId</td>
+              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-200">
                 {snapshot.mindmaps.length} ({totalNodes} nodes · {totalEdges} edges)
               </td>
             </tr>
             <tr>
-              <td className="py-3.5 px-6 font-mono font-medium text-slate-900">flashcards</td>
-              <td className="py-3.5 px-6 font-mono text-slate-500">id, topicId, dueDate</td>
-              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-800">
+              <td className="py-3.5 px-6 font-mono font-medium text-slate-200">flashcards</td>
+              <td className="py-3.5 px-6 font-mono text-slate-400">id, topicId, dueDate</td>
+              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-200">
                 {snapshot.flashcards.length}
               </td>
             </tr>
             <tr>
-              <td className="py-3.5 px-6 font-mono font-medium text-slate-900">blurtSessions</td>
-              <td className="py-3.5 px-6 font-mono text-slate-500">id, topicId</td>
-              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-800">
+              <td className="py-3.5 px-6 font-mono font-medium text-slate-200">blurtSessions</td>
+              <td className="py-3.5 px-6 font-mono text-slate-400">id, topicId</td>
+              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-200">
                 {snapshot.blurtSessions.length}
               </td>
             </tr>
             <tr>
-              <td className="py-3.5 px-6 font-mono font-medium text-slate-900">studyLogs</td>
-              <td className="py-3.5 px-6 font-mono text-slate-500">id, dateStr</td>
-              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-800">
+              <td className="py-3.5 px-6 font-mono font-medium text-slate-200">studyLogs</td>
+              <td className="py-3.5 px-6 font-mono text-slate-400">id, dateStr</td>
+              <td className="py-3.5 px-6 text-right font-mono tabular-nums text-slate-200">
                 {snapshot.studyLogs.length}
               </td>
             </tr>
@@ -161,12 +160,12 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
         </table>
       </div>
 
-      {/* Backup, Restore & Sample Reset Cards */}
+      {/* Backup, Restore & Wipe Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between space-y-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between space-y-4">
           <div className="space-y-1.5">
-            <h3 className="text-sm font-semibold text-slate-900">Export JSON Snapshot</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h3 className="text-sm font-semibold text-slate-100">Export JSON Snapshot</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Download your entire IndexedDB database—including spatial coordinates, SM-2 intervals,
               and blurt transcripts—as a portable JSON file.
             </p>
@@ -174,17 +173,17 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
           <button
             type="button"
             onClick={handleExportJSON}
-            className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
+            className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-semibold text-slate-950 bg-sky-400 rounded-lg hover:bg-sky-300 transition-colors"
           >
             <Download className="w-3.5 h-3.5" />
             <span>Export Backup (.json)</span>
           </button>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between space-y-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between space-y-4">
           <div className="space-y-1.5">
-            <h3 className="text-sm font-semibold text-slate-900">Import JSON Snapshot</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h3 className="text-sm font-semibold text-slate-100">Import JSON Snapshot</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Restore a previously exported Noesis JSON backup file directly into your browser’s
               IndexedDB object stores.
             </p>
@@ -200,7 +199,7 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-semibold text-slate-800 bg-slate-100 border border-slate-200 rounded-lg hover:bg-slate-200 transition-colors"
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-semibold text-slate-200 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors"
             >
               <Upload className="w-3.5 h-3.5" />
               <span>Restore from File</span>
@@ -208,10 +207,10 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col justify-between space-y-4">
+        <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-col justify-between space-y-4">
           <div className="space-y-1.5">
-            <h3 className="text-sm font-semibold text-slate-900">Clear All Local Data</h3>
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <h3 className="text-sm font-semibold text-slate-100">Clear All Local Data</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
               Permanently wipe all study topics, mind maps, flashcards, and blurt sessions from
               your browser’s IndexedDB database.
             </p>
@@ -220,7 +219,7 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
             <button
               type="button"
               onClick={() => setConfirmReset(true)}
-              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-medium text-rose-700 bg-rose-50 border border-rose-200 rounded-lg hover:bg-rose-100 transition-colors"
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 text-xs font-medium text-rose-300 bg-rose-950/50 border border-rose-800/70 rounded-lg hover:bg-rose-900/60 transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Wipe IndexedDB</span>
@@ -230,14 +229,14 @@ export const DataSovereigntyView: React.FC<DataSovereigntyViewProps> = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="flex-1 py-2 px-3 text-xs font-semibold text-white bg-rose-600 rounded-lg hover:bg-rose-700"
+                className="flex-1 py-2 px-3 text-xs font-semibold text-white bg-rose-600 rounded-lg hover:bg-rose-500"
               >
                 Confirm Wipe
               </button>
               <button
                 type="button"
                 onClick={() => setConfirmReset(false)}
-                className="py-2 px-3 text-xs font-medium text-slate-600 hover:text-slate-900"
+                className="py-2 px-3 text-xs font-medium text-slate-400 hover:text-slate-200"
               >
                 Cancel
               </button>

@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {
-  Flame,
-  Clock,
   Lock,
   Unlock,
-  CheckCircle2,
-  AlertTriangle,
   Plus,
   RotateCcw,
   BookOpen,
   Trash2,
-  ArrowRight,
   Check,
   Network,
 } from 'lucide-react';
@@ -109,7 +104,6 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
     }, 3500);
   };
 
-  // Start Active Blurt Session
   const handleStartBlurt = () => {
     setRawBlurtText('');
     setElapsedSeconds(0);
@@ -118,7 +112,6 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
     setStage('writing');
   };
 
-  // Complete Blurt & Run Concept Coverage Diff
   const handleFinishAndEvaluate = async () => {
     setTimerRunning(false);
     const now = Date.now();
@@ -211,7 +204,6 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
     setStage('review');
   };
 
-  // Toggle individual concept recall status during Stage 3 review
   const handleToggleConceptStatus = async (checkId: string, nextStatus: ConceptRecallStatus) => {
     if (!activeSession) return;
     const updatedChecks = activeSession.conceptChecks.map((c) =>
@@ -226,7 +218,6 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
     setActiveSession(updatedSession);
     await onSaveBlurtSession(updatedSession);
 
-    // Also sync mastery status back to the Mind Map node if linked
     const targetCheck = updatedChecks.find((c) => c.id === checkId);
     if (activeSession.mindMapId && targetCheck?.sourceNodeId) {
       const map = mindmaps.find((m) => m.id === activeSession.mindMapId);
@@ -252,7 +243,6 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
     await onSaveBlurtSession(updated);
   };
 
-  // Convert a single missed/partial concept into a Flashcard
   const handleCreateCardFromGap = async (check: BlurtConceptCheck) => {
     if (!activeSession) return;
     const now = Date.now();
@@ -278,7 +268,6 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
     showBanner(`Added "${check.concept}" to your Spaced Repetition deck`);
   };
 
-  // Convert ALL missed or partial concepts into Flashcards at once
   const handleConvertAllGapsToFlashcards = async () => {
     if (!activeSession) return;
     const gaps = activeSession.conceptChecks.filter(
@@ -338,12 +327,12 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-200">
+      <div className="flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-slate-800">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-semibold text-slate-100 tracking-tight">
             Active Recall Blurting Studio
           </h1>
-          <div className="flex items-center gap-2 text-xs text-slate-500 mt-1 tabular-nums">
+          <div className="flex items-center gap-2 text-xs text-slate-400 mt-1 tabular-nums">
             <span>Conceal reference notes</span>
             <span aria-hidden="true">·</span>
             <span>Timed free-recall dump</span>
@@ -359,7 +348,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               setTimerRunning(false);
               setStage('setup');
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-slate-200 bg-slate-900 border border-slate-800 rounded-lg hover:bg-slate-800 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             New Blurt Configuration
@@ -368,35 +357,35 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
       </div>
 
       {feedbackBanner && (
-        <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 text-white text-xs font-medium rounded-xl">
+        <div className="flex items-center gap-2 px-4 py-2.5 bg-slate-900 border border-slate-700 text-slate-100 text-xs font-medium rounded-xl">
           <Check className="w-4 h-4 text-emerald-400" />
           <span>{feedbackBanner}</span>
         </div>
       )}
 
-      {/* STAGE 1: SETUP &PAST SESSIONS */}
+      {/* STAGE 1: SETUP & PAST SESSIONS */}
       {stage === 'setup' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Setup Card (7 cols) */}
-          <div className="lg:col-span-7 bg-white border border-slate-200 rounded-xl p-6 space-y-6">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-6 space-y-6">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
               <div>
-                <h2 className="text-base font-semibold text-slate-900">
+                <h2 className="text-base font-semibold text-slate-100">
                   01. Configure Concealed Reference Source
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-slate-400 mt-0.5">
                   Select a Mind Map or custom rubric to lock away while you blurt from memory.
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
+              <div className="flex items-center gap-1 p-1 bg-slate-950 border border-slate-800 rounded-lg">
                 <button
                   type="button"
                   onClick={() => setSourceMode('mindmap')}
                   className={`px-3 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                     sourceMode === 'mindmap'
-                      ? 'bg-white text-slate-900 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-slate-800 text-slate-100 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   From Mind Map
@@ -406,8 +395,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                   onClick={() => setSourceMode('custom')}
                   className={`px-3 py-1 text-xs font-medium rounded-md transition-colors whitespace-nowrap ${
                     sourceMode === 'custom'
-                      ? 'bg-white text-slate-900 shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-slate-800 text-slate-100 shadow-xs'
+                      : 'text-slate-400 hover:text-slate-200'
                   }`}
                 >
                   Custom Rubric
@@ -419,13 +408,13 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               mindmaps.length > 0 ? (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                    <label className="block text-xs font-medium text-slate-300 mb-1.5">
                       Target Mind Map (Nodes &amp; Key Terms will be concealed during writing)
                     </label>
                     <select
                       value={selectedMap?.id || ''}
                       onChange={(e) => setSelectedMapId(e.target.value)}
-                      className="w-full px-3.5 py-2.5 text-sm font-medium text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                      className="w-full px-3.5 py-2.5 text-sm font-medium text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                     >
                       {mindmaps.map((m) => {
                         const t = topics.find((top) => top.id === m.topicId);
@@ -439,16 +428,16 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                   </div>
 
                   {selectedMap && (
-                    <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                      <div className="flex items-center justify-between text-xs text-slate-600">
-                        <span className="font-semibold text-slate-900">{selectedMap.title}</span>
+                    <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-400">
+                        <span className="font-semibold text-slate-100">{selectedMap.title}</span>
                         <span className="font-mono tabular-nums">
                           {selectedMap.nodes.length} target concepts ·{' '}
                           {selectedMap.nodes.reduce((acc, n) => acc + n.keyTerms.length, 0)} key terms
                         </span>
                       </div>
                       {selectedMap.description && (
-                        <p className="text-xs text-slate-500 leading-relaxed">
+                        <p className="text-xs text-slate-400 leading-relaxed">
                           {selectedMap.description}
                         </p>
                       )}
@@ -456,8 +445,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                   )}
                 </div>
               ) : (
-                <div className="p-6 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-3">
-                  <p className="text-xs text-slate-600">
+                <div className="p-6 bg-slate-950 border border-slate-800 rounded-xl text-center space-y-3">
+                  <p className="text-xs text-slate-400">
                     You don’t have any Mind Maps yet. Create a Mind Map first or use a Custom Rubric
                     for your blurt session.
                   </p>
@@ -465,7 +454,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                     <button
                       type="button"
                       onClick={() => setSourceMode('custom')}
-                      className="px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
+                      className="px-3.5 py-1.5 text-xs font-semibold text-slate-950 bg-sky-400 rounded-lg hover:bg-sky-300 transition-colors"
                     >
                       Use Custom Rubric
                     </button>
@@ -476,7 +465,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               <div className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
                       Blurt Session Title
                     </label>
                     <input
@@ -484,17 +473,17 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                       placeholder="Enter session title..."
                       value={customTitle}
                       onChange={(e) => setCustomTitle(e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                      className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
                       Study Topic
                     </label>
                     <select
                       value={customTopicId}
                       onChange={(e) => setCustomTopicId(e.target.value)}
-                      className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                      className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                     >
                       {topics.length === 0 && (
                         <option value="general">General Study</option>
@@ -509,7 +498,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
                     Recall Prompt
                   </label>
                   <input
@@ -517,12 +506,12 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                     placeholder="What question or topic are you recalling from memory?"
                     value={customPrompt}
                     onChange={(e) => setCustomPrompt(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                    className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
                     Target Concepts Checklist (Optional — One per line: Concept | Details | comma,keywords)
                   </label>
                   <textarea
@@ -530,15 +519,15 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                     value={customConceptsText}
                     onChange={(e) => setCustomConceptsText(e.target.value)}
                     placeholder="Concept Name | Reference explanation | keyword1, keyword2"
-                    className="w-full px-3 py-2 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                    className="w-full px-3 py-2 text-xs font-mono text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
               </div>
             )}
 
             {/* Timer Selection */}
-            <div className="pt-4 border-t border-slate-100 space-y-3">
-              <label className="block text-xs font-semibold text-slate-900">
+            <div className="pt-4 border-t border-slate-800 space-y-3">
+              <label className="block text-xs font-semibold text-slate-100">
                 02. Select Time Constraint
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -554,8 +543,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                     onClick={() => setTimeLimitSeconds(opt.sec)}
                     className={`py-2 px-3 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap ${
                       timeLimitSeconds === opt.sec
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                        ? 'bg-sky-400 text-slate-950 border-sky-400 font-semibold'
+                        : 'bg-slate-950 text-slate-300 border-slate-800 hover:bg-slate-800'
                     }`}
                   >
                     {opt.label}
@@ -567,7 +556,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
             <button
               type="button"
               onClick={handleStartBlurt}
-              className="w-full py-3 px-4 text-sm font-semibold text-white bg-sky-600 rounded-xl hover:bg-sky-700 transition-colors flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 text-sm font-semibold text-slate-950 bg-sky-400 rounded-xl hover:bg-sky-300 transition-colors flex items-center justify-center gap-2"
             >
               <Lock className="w-4 h-4" />
               <span>Lock Reference Notes &amp; Start Blurt Timer</span>
@@ -576,7 +565,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
 
           {/* Right Column: Past Blurt History & Progression (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
-            <h2 className="text-base font-semibold text-slate-900">
+            <h2 className="text-base font-semibold text-slate-100">
               Recent Blurt Sessions ({blurtSessions.length})
             </h2>
 
@@ -592,12 +581,12 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                 return (
                   <div
                     key={session.id}
-                    className="bg-white border border-slate-200 rounded-xl p-4 space-y-3 hover:border-slate-300 transition-colors"
+                    className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3 hover:border-slate-700 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <h3 className="text-sm font-semibold text-slate-900">{session.title}</h3>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 tabular-nums">
+                        <h3 className="text-sm font-semibold text-slate-100">{session.title}</h3>
+                        <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5 tabular-nums">
                           <span>
                             {new Date(session.createdAt).toLocaleDateString(undefined, {
                               month: 'short',
@@ -615,29 +604,29 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                         <div
                           className={`text-base font-semibold ${
                             session.scorePercent >= 80
-                              ? 'text-emerald-700'
+                              ? 'text-emerald-400'
                               : session.scorePercent >= 50
-                              ? 'text-amber-700'
-                              : 'text-rose-700'
+                              ? 'text-amber-400'
+                              : 'text-rose-400'
                           }`}
                         >
                           {session.scorePercent}%
                         </div>
-                        <div className="text-[11px] text-slate-500">Recall</div>
+                        <div className="text-[11px] text-slate-400">Recall</div>
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-600 line-clamp-2 italic">
+                    <p className="text-xs text-slate-300 line-clamp-2 italic">
                       "{session.rawBlurtText}"
                     </p>
 
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                      <div className="text-slate-500 tabular-nums">
+                    <div className="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+                      <div className="text-slate-400 tabular-nums">
                         <span>● {recalledCount} recalled</span>
                         <span className="mx-1.5" aria-hidden="true">
                           ·
                         </span>
-                        <span className={missedCount > 0 ? 'text-rose-700 font-medium' : ''}>
+                        <span className={missedCount > 0 ? 'text-rose-400 font-medium' : ''}>
                           ▲ {missedCount} gaps
                         </span>
                       </div>
@@ -650,14 +639,14 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                             setCreatedCardIds({});
                             setStage('review');
                           }}
-                          className="font-medium text-sky-700 hover:text-sky-800"
+                          className="font-medium text-sky-400 hover:text-sky-300"
                         >
                           Inspect Gaps
                         </button>
                         <button
                           type="button"
                           onClick={() => onDeleteBlurtSession(session.id)}
-                          className="text-slate-400 hover:text-rose-600"
+                          className="text-slate-500 hover:text-rose-400"
                           title="Delete Session"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -669,7 +658,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               })}
 
               {blurtSessions.length === 0 && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6 text-center text-xs text-slate-500">
+                <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 text-center text-xs text-slate-400">
                   No blurt sessions recorded yet. Start your first active recall sprint on the left!
                 </div>
               )}
@@ -680,11 +669,11 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
 
       {/* STAGE 2: ACTIVE WRITING / FREE-RECALL PHASE */}
       {stage === 'writing' && (
-        <div className="max-w-4xl mx-auto bg-white border border-slate-200 rounded-xl p-6 md:p-8 space-y-6">
+        <div className="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-xl p-6 md:p-8 space-y-6">
           {/* Top Concealed Status & Live Timer */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-slate-800">
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700">
+              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-400">
                 <Lock className="w-3.5 h-3.5" />
                 <span>
                   Reference Vault Locked (
@@ -694,7 +683,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                   )
                 </span>
               </div>
-              <h2 className="text-lg font-semibold text-slate-900">
+              <h2 className="text-lg font-semibold text-slate-100">
                 {sourceMode === 'mindmap' && selectedMap
                   ? selectedMap.title
                   : customTitle || 'Active Recall Blurt'}
@@ -703,14 +692,14 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
 
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <div className="text-[11px] text-slate-500">
+                <div className="text-[11px] text-slate-400">
                   {timeLimitSeconds > 0 ? 'Time Remaining' : 'Elapsed Time'}
                 </div>
                 <div
                   className={`text-2xl font-mono font-semibold tabular-nums ${
                     timeLimitSeconds > 0 && remainingSeconds <= 30
-                      ? 'text-rose-600'
-                      : 'text-slate-900'
+                      ? 'text-rose-400'
+                      : 'text-slate-100'
                   }`}
                 >
                   {formatTimer(remainingSeconds)}
@@ -720,7 +709,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               <button
                 type="button"
                 onClick={handleFinishAndEvaluate}
-                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-emerald-600 rounded-xl hover:bg-emerald-700 transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-950 bg-emerald-400 rounded-xl hover:bg-emerald-300 transition-colors whitespace-nowrap"
               >
                 <Unlock className="w-4 h-4" />
                 <span>Finish &amp; Reveal Gaps</span>
@@ -729,7 +718,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
           </div>
 
           {/* Prompt Cue */}
-          <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700 leading-relaxed">
+          <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-lg text-xs text-slate-300 leading-relaxed">
             <strong>Active Recall Prompt:</strong>{' '}
             {sourceMode === 'mindmap' && selectedMap
               ? `Write out everything you remember about "${selectedMap.title}". Include core definitions, causal links between nodes, stoichiometry/numbers, and boundary conditions.`
@@ -745,9 +734,9 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               value={rawBlurtText}
               onChange={(e) => setRawBlurtText(e.target.value)}
               placeholder="Start typing everything you can recall... Don't worry about perfection—focus on retrieving mechanisms, key terms, and relationships from memory."
-              className="w-full p-4 text-base leading-relaxed text-slate-900 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+              className="w-full p-4 text-base leading-relaxed text-slate-100 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-500"
             />
-            <div className="flex items-center justify-between text-xs text-slate-500 mt-2 font-mono tabular-nums">
+            <div className="flex items-center justify-between text-xs text-slate-400 mt-2 font-mono tabular-nums">
               <span>{liveWordCount} words written</span>
               <span>{rawBlurtText.length} characters</span>
             </div>
@@ -759,26 +748,26 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
       {stage === 'review' && activeSession && (
         <div className="space-y-6">
           {/* Summary Banner */}
-          <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-wrap items-center justify-between gap-6">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 flex flex-wrap items-center justify-between gap-6">
             <div className="space-y-1">
-              <div className="text-xs text-slate-500">
+              <div className="text-xs text-slate-400">
                 Blurt Gap Analysis · {new Date(activeSession.createdAt).toLocaleString()}
               </div>
-              <h2 className="text-xl font-semibold text-slate-900">{activeSession.title}</h2>
-              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-600 tabular-nums pt-1">
-                <span className="text-emerald-700 font-medium">
+              <h2 className="text-xl font-semibold text-slate-100">{activeSession.title}</h2>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-slate-400 tabular-nums pt-1">
+                <span className="text-emerald-400 font-medium">
                   ●{' '}
                   {activeSession.conceptChecks.filter((c) => c.status === 'recalled').length}{' '}
                   Recalled
                 </span>
                 <span aria-hidden="true">·</span>
-                <span className="text-amber-700 font-medium">
+                <span className="text-amber-400 font-medium">
                   ◐{' '}
                   {activeSession.conceptChecks.filter((c) => c.status === 'partial').length}{' '}
                   Partial
                 </span>
                 <span aria-hidden="true">·</span>
-                <span className="text-rose-700 font-medium">
+                <span className="text-rose-400 font-medium">
                   ▲{' '}
                   {activeSession.conceptChecks.filter((c) => c.status === 'missed').length} Missed
                   Gaps
@@ -790,14 +779,14 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
 
             <div className="flex flex-wrap items-center gap-4">
               <div className="text-right font-mono tabular-nums">
-                <div className="text-xs text-slate-500">Recall Coverage Score</div>
+                <div className="text-xs text-slate-400">Recall Coverage Score</div>
                 <div
                   className={`text-3xl font-bold ${
                     activeSession.scorePercent >= 80
-                      ? 'text-emerald-700'
+                      ? 'text-emerald-400'
                       : activeSession.scorePercent >= 50
-                      ? 'text-amber-700'
-                      : 'text-rose-700'
+                      ? 'text-amber-400'
+                      : 'text-rose-400'
                   }`}
                 >
                   {activeSession.scorePercent}%
@@ -807,7 +796,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
               <button
                 type="button"
                 onClick={handleConvertAllGapsToFlashcards}
-                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-sky-600 rounded-xl hover:bg-sky-700 transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-slate-950 bg-sky-400 rounded-xl hover:bg-sky-300 transition-colors whitespace-nowrap"
               >
                 <BookOpen className="w-4 h-4" />
                 <span>Convert All Gaps to Flashcards</span>
@@ -819,26 +808,26 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             {/* Left Column: User's Raw Blurt & Self-Reflection (5 cols) */}
             <div className="lg:col-span-5 space-y-5">
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-slate-900">
+                  <h3 className="text-sm font-semibold text-slate-100">
                     Your Raw Free-Recall Blurt
                   </h3>
-                  <span className="text-xs font-mono tabular-nums text-slate-500">
+                  <span className="text-xs font-mono tabular-nums text-slate-400">
                     {activeSession.wordCount} words
                   </span>
                 </div>
 
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-800 leading-relaxed whitespace-pre-wrap">
+                <div className="p-4 bg-slate-950 border border-slate-800 rounded-lg text-sm text-slate-200 leading-relaxed whitespace-pre-wrap">
                   {activeSession.rawBlurtText || '(No text entered during blurt)'}
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-3">
-                <label className="block text-sm font-semibold text-slate-900">
+              <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-3">
+                <label className="block text-sm font-semibold text-slate-100">
                   Self-Correction &amp; Gap Reflection Notes
                 </label>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-400">
                   Synthesize what you missed or confused so your next blurt locks it in.
                 </p>
                 <textarea
@@ -846,7 +835,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                   value={activeSession.selfReflection}
                   onChange={(e) => handleUpdateReflection(e.target.value)}
                   placeholder="What specific mechanism, term, or branch did you forget? Write the correction here..."
-                  className="w-full p-3 text-xs leading-relaxed bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                  className="w-full p-3 text-xs leading-relaxed text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
               </div>
 
@@ -854,7 +843,7 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                 <button
                   type="button"
                   onClick={() => onOpenMindMap(activeSession.mindMapId!)}
-                  className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-700 hover:text-sky-800"
+                  className="inline-flex items-center gap-1.5 text-xs font-medium text-sky-400 hover:text-sky-300"
                 >
                   <Network className="w-4 h-4" />
                   <span>Open Reference Mind Map in Spatial Canvas</span>
@@ -863,41 +852,40 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
             </div>
 
             {/* Right Column: Reference Mind Map Rubric & Gap-to-Flashcard Generator (7 cols) */}
-            <div className="lg:col-span-7 bg-white border border-slate-200 rounded-xl p-5 space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-900">
+                  <h3 className="text-sm font-semibold text-slate-100">
                     Reference Concept Rubric &amp; Gap Detector
                   </h3>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-400">
                     Auto-scored by keyword stem matching. Adjust any concept’s recall state below or
                     turn missed concepts into flashcards.
                   </p>
                 </div>
               </div>
 
-              <div className="divide-y divide-slate-200">
+              <div className="divide-y divide-slate-800">
                 {activeSession.conceptChecks.map((check) => {
                   const isCardCreated = !!createdCardIds[check.id];
                   return (
                     <div key={check.id} className="py-4 first:pt-1 last:pb-1 space-y-2.5">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <h4 className="text-sm font-semibold text-slate-900">{check.concept}</h4>
-                          <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                          <h4 className="text-sm font-semibold text-slate-100">{check.concept}</h4>
+                          <p className="text-xs text-slate-400 leading-relaxed mt-0.5">
                             {check.details}
                           </p>
                         </div>
 
-                        {/* Interactive 3-state self-grading segmented control */}
-                        <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg shrink-0">
+                        <div className="flex items-center gap-1 p-1 bg-slate-950 border border-slate-800 rounded-lg shrink-0">
                           <button
                             type="button"
                             onClick={() => handleToggleConceptStatus(check.id, 'recalled')}
                             className={`px-2.5 py-1 text-[11px] font-medium rounded transition-colors whitespace-nowrap ${
                               check.status === 'recalled'
-                                ? 'bg-emerald-600 text-white'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-emerald-500 text-slate-950 font-semibold'
+                                : 'text-slate-400 hover:text-slate-200'
                             }`}
                           >
                             ● Recalled
@@ -907,8 +895,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                             onClick={() => handleToggleConceptStatus(check.id, 'partial')}
                             className={`px-2.5 py-1 text-[11px] font-medium rounded transition-colors whitespace-nowrap ${
                               check.status === 'partial'
-                                ? 'bg-amber-600 text-white'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-amber-500 text-slate-950 font-semibold'
+                                : 'text-slate-400 hover:text-slate-200'
                             }`}
                           >
                             ◐ Partial
@@ -918,8 +906,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                             onClick={() => handleToggleConceptStatus(check.id, 'missed')}
                             className={`px-2.5 py-1 text-[11px] font-medium rounded transition-colors whitespace-nowrap ${
                               check.status === 'missed'
-                                ? 'bg-rose-600 text-white'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-rose-500 text-white font-semibold'
+                                : 'text-slate-400 hover:text-slate-200'
                             }`}
                           >
                             ▲ Missed
@@ -927,10 +915,9 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                         </div>
                       </div>
 
-                      {/* Key terms match row + Convert to Flashcard button */}
-                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
                         <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="text-[11px] text-slate-400">Expected Terms:</span>
+                          <span className="text-[11px] text-slate-500">Expected Terms:</span>
                           {check.keyTerms.map((term, idx) => {
                             const wasMatched = check.matchedTerms.some(
                               (m) =>
@@ -942,8 +929,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                                 <span
                                   className={
                                     wasMatched
-                                      ? 'text-emerald-700 font-medium'
-                                      : 'text-slate-500'
+                                      ? 'text-emerald-400 font-medium'
+                                      : 'text-slate-400'
                                   }
                                 >
                                   {wasMatched ? `✓ ${term}` : term}
@@ -959,8 +946,8 @@ export const BlurtingWorkspace: React.FC<BlurtingWorkspaceProps> = ({
                           onClick={() => handleCreateCardFromGap(check)}
                           className={`inline-flex items-center gap-1 text-xs font-medium whitespace-nowrap ${
                             isCardCreated
-                              ? 'text-emerald-700 cursor-default'
-                              : 'text-sky-700 hover:text-sky-800'
+                              ? 'text-emerald-400 cursor-default'
+                              : 'text-sky-400 hover:text-sky-300'
                           }`}
                         >
                           {isCardCreated ? (

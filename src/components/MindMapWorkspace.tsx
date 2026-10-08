@@ -7,14 +7,12 @@ import {
   GitBranch,
   Link2,
   Trash2,
-  Sparkles,
   BookOpen,
   Flame,
   Check,
   X,
   ArrowRight,
   Network,
-  Layers,
 } from 'lucide-react';
 import {
   Flashcard,
@@ -49,47 +47,47 @@ const COLOR_STYLES: Record<
   { border: string; accentBar: string; dot: string; label: string }
 > = {
   slate: {
-    border: 'border-slate-300',
-    accentBar: 'bg-slate-600',
-    dot: 'bg-slate-600',
+    border: 'border-slate-700',
+    accentBar: 'bg-slate-400',
+    dot: 'bg-slate-400',
     label: 'Slate',
   },
   azure: {
-    border: 'border-sky-300',
-    accentBar: 'bg-sky-600',
-    dot: 'bg-sky-600',
+    border: 'border-sky-800/80',
+    accentBar: 'bg-sky-400',
+    dot: 'bg-sky-400',
     label: 'Azure',
   },
   emerald: {
-    border: 'border-emerald-300',
-    accentBar: 'bg-emerald-600',
-    dot: 'bg-emerald-600',
+    border: 'border-emerald-800/80',
+    accentBar: 'bg-emerald-400',
+    dot: 'bg-emerald-400',
     label: 'Emerald',
   },
   amber: {
-    border: 'border-amber-300',
-    accentBar: 'bg-amber-600',
-    dot: 'bg-amber-600',
+    border: 'border-amber-800/80',
+    accentBar: 'bg-amber-400',
+    dot: 'bg-amber-400',
     label: 'Amber',
   },
   rose: {
-    border: 'border-rose-300',
-    accentBar: 'bg-rose-600',
-    dot: 'bg-rose-600',
+    border: 'border-rose-800/80',
+    accentBar: 'bg-rose-400',
+    dot: 'bg-rose-400',
     label: 'Rose',
   },
   violet: {
-    border: 'border-violet-300',
-    accentBar: 'bg-violet-600',
-    dot: 'bg-violet-600',
+    border: 'border-violet-800/80',
+    accentBar: 'bg-violet-400',
+    dot: 'bg-violet-400',
     label: 'Violet',
   },
 };
 
 const MASTERY_META: Record<NodeMastery, { symbol: string; label: string; colorClass: string }> = {
-  mastered: { symbol: '●', label: 'Mastered', colorClass: 'text-emerald-700' },
-  learning: { symbol: '◐', label: 'Learning', colorClass: 'text-amber-700' },
-  untested: { symbol: '○', label: 'Untested', colorClass: 'text-slate-500' },
+  mastered: { symbol: '●', label: 'Mastered', colorClass: 'text-emerald-400' },
+  learning: { symbol: '◐', label: 'Learning', colorClass: 'text-amber-400' },
+  untested: { symbol: '○', label: 'Untested', colorClass: 'text-slate-400' },
 };
 
 export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
@@ -242,7 +240,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
         node.y = Math.round(centerY + radiusY * Math.sin(angle));
       });
     } else {
-      // Horizontal tree BFS layout
       const adjacency: Record<string, string[]> = {};
       for (const e of activeMap.edges) {
         if (!adjacency[e.source]) adjacency[e.source] = [];
@@ -267,7 +264,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
         currentLevel = nextLevel;
       }
 
-      // Add any disconnected nodes to level 1
       const unvisited = updatedNodes.filter((n) => !visited.has(n.id)).map((n) => n.id);
       if (unvisited.length > 0) {
         if (levels.length > 1) levels[1].push(...unvisited);
@@ -365,7 +361,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
     }
   };
 
-  // Start dragging a node or complete a connection
   const handleNodeMouseDown = async (e: React.MouseEvent, node: MindMapNode) => {
     e.stopPropagation();
 
@@ -408,7 +403,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
     };
   };
 
-  // Add child node from currently selected node (or standalone root node)
   const handleAddNode = async (parentNode?: MindMapNode) => {
     if (!activeMap) return;
     const baseNode = parentNode || selectedNode || localNodes[0];
@@ -452,7 +446,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
     });
   };
 
-  // Update node properties from inspector
   const handleUpdateSelectedNode = async (patch: Partial<MindMapNode>) => {
     if (!activeMap || !selectedNode) return;
     const nextNodes = localNodes.map((n) =>
@@ -512,7 +505,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
     showToast('Removed connection');
   };
 
-  // Convert Node to Spaced Repetition Flashcard
   const handleGenerateFlashcardFromNode = async (
     node: MindMapNode,
     cardType: 'qa' | 'cloze' | 'branch'
@@ -527,7 +519,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
       front = `Explain the mechanism and significance of ${node.label} in ${activeMap.title}.`;
       back = node.summary;
     } else if (cardType === 'cloze') {
-      // Automatically wrap up to 2 key terms inside the summary if they appear, or build a clean cloze sentence
       let clozeSentence = `${node.label}: ${node.summary}`;
       let clozeIndex = 1;
       for (const term of node.keyTerms.slice(0, 3)) {
@@ -539,14 +530,12 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
         }
       }
       if (clozeIndex === 1) {
-        // Fallback if exact substring wasn't found in summary
         const firstTerm = node.keyTerms[0] || node.label;
         clozeSentence = `In ${activeMap.title}, {{c1::${node.label}}} is characterized by ${node.summary} (Key concept: {{c2::${firstTerm}}}).`;
       }
       front = clozeSentence;
       back = `Key Terms: ${node.keyTerms.join(' · ')}`;
     } else {
-      // Branch recall card: find connected child/neighbor nodes
       const connectedNodeIds = activeMap.edges
         .filter((e) => e.source === node.id || e.target === node.id)
         .map((e) => (e.source === node.id ? e.target : e.source));
@@ -574,15 +563,16 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
       interval: 0,
       repetitions: 0,
       lapses: 0,
-      dueDate: now, // Due immediately for spaced repetition
+      dueDate: now,
       createdAt: now,
     };
 
     await onCreateFlashcard(newCard);
-    showToast(`Created ${cardType === 'cloze' ? 'Cloze' : cardType === 'branch' ? 'Branch' : 'Q&A'} Flashcard for "${node.label}"`);
+    showToast(
+      `Created ${cardType === 'cloze' ? 'Cloze' : cardType === 'branch' ? 'Branch' : 'Q&A'} Flashcard for "${node.label}"`
+    );
   };
 
-  // Create a brand new Mind Map
   const handleCreateNewMindMap = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMapTitle.trim()) return;
@@ -590,7 +580,10 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
     const now = Date.now();
     let targetTopicId = newMapTopicId;
 
-    if ((newMapTopicId === '__new__' || !topics.length) && (newTopicTitleInput.trim() || newMapTitle.trim())) {
+    if (
+      (newMapTopicId === '__new__' || !topics.length) &&
+      (newTopicTitleInput.trim() || newMapTitle.trim())
+    ) {
       const createdTopic: Topic = {
         id: `topic-${now}`,
         title: newTopicTitleInput.trim() || newMapTitle.trim(),
@@ -658,20 +651,21 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
   const activeTopic = topics.find((t) => t.id === activeMap?.topicId);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-65px)] bg-slate-50 overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#090D16] overflow-hidden">
       {/* Sub-bar: Map Selector, Spatial Layout Tools & Cognitive Bridge Actions */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3 bg-white border-b border-slate-200 shrink-0">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-3 bg-slate-900 border-b border-slate-800 shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <div className="flex items-center gap-2">
-            <label htmlFor="mindmap-select" className="text-xs font-medium text-slate-500 whitespace-nowrap">
+            <label htmlFor="mindmap-select" className="text-xs font-medium text-slate-400 whitespace-nowrap">
               Active Map
             </label>
             <select
               id="mindmap-select"
               value={activeMap?.id || ''}
               onChange={(e) => onSelectMap(e.target.value)}
-              className="px-3 py-1.5 text-sm font-semibold text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
+              className="px-3 py-1.5 text-sm font-semibold text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
             >
+              {mindmaps.length === 0 && <option value="">No maps created</option>}
               {mindmaps.map((m) => {
                 const t = topics.find((top) => top.id === m.topicId);
                 return (
@@ -685,15 +679,18 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
           <button
             type="button"
-            onClick={() => setShowNewMapForm(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+            onClick={() => {
+              setNewMapTopicId(topics[0]?.id || '__new__');
+              setShowNewMapForm(true);
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
             New Map
           </button>
 
           {activeTopic && (
-            <div className="hidden xl:flex items-center gap-2 text-xs text-slate-500 pl-2 border-l border-slate-200 truncate">
+            <div className="hidden xl:flex items-center gap-2 text-xs text-slate-400 pl-2 border-l border-slate-800 truncate">
               <span>{activeTopic.category}</span>
               <span aria-hidden="true">·</span>
               <span className="tabular-nums">{localNodes.length} nodes</span>
@@ -705,20 +702,22 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
         {/* Center / Right Controls: Canvas Actions & Study Bridge */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-slate-100 p-1 rounded-lg">
+          <div className="flex items-center bg-slate-950 border border-slate-800 p-1 rounded-lg">
             <button
               type="button"
               onClick={() => handleAddNode()}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-800 bg-white rounded-md shadow-xs hover:bg-slate-50 transition-colors whitespace-nowrap"
+              disabled={!activeMap}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-slate-100 bg-slate-800 rounded-md hover:bg-slate-700 disabled:opacity-40 transition-colors whitespace-nowrap"
               title="Add a new concept node connected to the selected node"
             >
-              <Plus className="w-3.5 h-3.5 text-sky-600" />
+              <Plus className="w-3.5 h-3.5 text-sky-400" />
               Add Node
             </button>
             <button
               type="button"
               onClick={() => handleAutoLayout('horizontal')}
-              className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors whitespace-nowrap"
+              disabled={!activeMap}
+              className="px-2.5 py-1 text-xs font-medium text-slate-400 hover:text-slate-100 disabled:opacity-40 transition-colors whitespace-nowrap"
               title="Arrange nodes in a left-to-right hierarchy"
             >
               Tree Layout
@@ -726,18 +725,19 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
             <button
               type="button"
               onClick={() => handleAutoLayout('radial')}
-              className="px-2.5 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors whitespace-nowrap"
+              disabled={!activeMap}
+              className="px-2.5 py-1 text-xs font-medium text-slate-400 hover:text-slate-100 disabled:opacity-40 transition-colors whitespace-nowrap"
               title="Arrange nodes radially around the primary concept"
             >
               Radial Layout
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center bg-slate-100 p-1 rounded-lg">
+          <div className="hidden sm:flex items-center bg-slate-950 border border-slate-800 p-1 rounded-lg">
             <button
               type="button"
               onClick={() => setZoom((z) => Math.max(0.45, Math.round((z - 0.1) * 100) / 100))}
-              className="p-1 text-slate-600 hover:text-slate-900 rounded"
+              className="p-1 text-slate-400 hover:text-slate-100 rounded"
               title="Zoom Out"
               aria-label="Zoom Out"
             >
@@ -746,7 +746,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
             <button
               type="button"
               onClick={() => setZoom(1)}
-              className="px-2 text-xs font-mono tabular-nums text-slate-700 hover:text-slate-900"
+              className="px-2 text-xs font-mono tabular-nums text-slate-300 hover:text-slate-100"
               title="Reset Zoom to 100%"
             >
               {Math.round(zoom * 100)}%
@@ -754,7 +754,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
             <button
               type="button"
               onClick={() => setZoom((z) => Math.min(1.65, Math.round((z + 0.1) * 100) / 100))}
-              className="p-1 text-slate-600 hover:text-slate-900 rounded"
+              className="p-1 text-slate-400 hover:text-slate-100 rounded"
               title="Zoom In"
               aria-label="Zoom In"
             >
@@ -763,7 +763,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
             <button
               type="button"
               onClick={handleFitView}
-              className="p-1 text-slate-600 hover:text-slate-900 rounded ml-0.5"
+              className="p-1 text-slate-400 hover:text-slate-100 rounded ml-0.5"
               title="Fit Map to Screen"
               aria-label="Fit Map to Screen"
             >
@@ -775,7 +775,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
             <button
               type="button"
               onClick={() => onLaunchBlurtFromMap(activeMap.id)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-slate-950 bg-sky-400 rounded-lg hover:bg-sky-300 transition-colors whitespace-nowrap"
             >
               <Flame className="w-3.5 h-3.5" />
               Blurt This Map
@@ -807,7 +807,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
         >
           {/* Floating Link Mode Banner */}
           {connectingFromNodeId && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 px-4 py-2 bg-slate-900 text-white text-xs font-medium rounded-lg shadow-md">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 px-4 py-2 bg-slate-900 border border-sky-500/40 text-slate-100 text-xs font-medium rounded-lg shadow-lg">
               <Link2 className="w-3.5 h-3.5 text-sky-400" />
               <span>
                 Click any target node on the canvas to create a directed link from{' '}
@@ -818,7 +818,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
               <button
                 type="button"
                 onClick={() => setConnectingFromNodeId(null)}
-                className="text-slate-300 hover:text-white underline ml-2"
+                className="text-slate-400 hover:text-white underline ml-2"
               >
                 Cancel
               </button>
@@ -827,7 +827,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
           {/* Toast Feedback Banner */}
           {toastMessage && (
-            <div className="absolute bottom-5 left-5 z-30 flex items-center gap-2 px-3.5 py-2 bg-slate-900 text-white text-xs font-medium rounded-lg shadow-sm">
+            <div className="absolute bottom-5 left-5 z-30 flex items-center gap-2 px-3.5 py-2 bg-slate-900 border border-slate-700 text-slate-100 text-xs font-medium rounded-lg shadow-lg">
               <Check className="w-3.5 h-3.5 text-emerald-400" />
               <span>{toastMessage}</span>
             </div>
@@ -839,13 +839,13 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
               onMouseDown={(e) => e.stopPropagation()}
               className="absolute inset-0 z-20 flex items-center justify-center p-6"
             >
-              <div className="max-w-md w-full bg-white border border-slate-200 rounded-xl p-8 text-center space-y-4 shadow-xs">
-                <Network className="w-8 h-8 text-sky-600 mx-auto" />
+              <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-xl p-8 text-center space-y-4 shadow-lg">
+                <Network className="w-8 h-8 text-sky-400 mx-auto" />
                 <div className="space-y-1">
-                  <h2 className="text-base font-semibold text-slate-900">
+                  <h2 className="text-base font-semibold text-slate-100">
                     No Mind Maps Created Yet
                   </h2>
-                  <p className="text-xs text-slate-500 leading-relaxed">
+                  <p className="text-xs text-slate-400 leading-relaxed">
                     Create your first spatial mind map to organize concepts, link nodes, and
                     generate spaced repetition flashcards or active recall blurts.
                   </p>
@@ -856,7 +856,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     setNewMapTopicId(topics[0]?.id || '__new__');
                     setShowNewMapForm(true);
                   }}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-slate-950 bg-sky-400 rounded-lg hover:bg-sky-300 transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Create First Mind Map</span>
@@ -900,7 +900,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                   markerHeight="6"
                   orient="auto-start-reverse"
                 >
-                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0284C7" />
+                  <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38BDF8" />
                 </marker>
               </defs>
 
@@ -918,7 +918,6 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                 const dy = ty - sy;
                 const dist = Math.hypot(dx, dy) || 1;
 
-                // Stop arrow slightly before target node boundary
                 const padTarget = 68;
                 const endX = tx - (dx / dist) * Math.min(padTarget, dist * 0.35);
                 const endY = ty - (dy / dist) * Math.min(padTarget, dist * 0.35);
@@ -944,12 +943,11 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                       setSelectedNodeId(null);
                     }}
                   >
-                    {/* Invisible wider hit target */}
                     <path d={pathData} fill="none" stroke="transparent" strokeWidth={16} />
                     <path
                       d={pathData}
                       fill="none"
-                      stroke={isSelected ? '#0284C7' : '#94A3B8'}
+                      stroke={isSelected ? '#38BDF8' : '#475569'}
                       strokeWidth={isSelected ? 2.5 : 1.75}
                       strokeDasharray={edge.style === 'dashed' ? '6 4' : undefined}
                       markerEnd={
@@ -965,14 +963,14 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                           width={edge.label.length * 6.8 + 12}
                           height={20}
                           rx={4}
-                          fill={isSelected ? '#E0F2FE' : '#F8FAFC'}
-                          stroke={isSelected ? '#0284C7' : '#CBD5E1'}
+                          fill={isSelected ? '#0C4A6E' : '#0F172A'}
+                          stroke={isSelected ? '#38BDF8' : '#334155'}
                           strokeWidth={1}
                         />
                         <text
                           textAnchor="middle"
                           dominantBaseline="middle"
-                          className="text-[11px] font-medium fill-slate-600 select-none"
+                          className="text-[11px] font-medium fill-slate-300 select-none"
                         >
                           {edge.label}
                         </text>
@@ -1001,12 +999,12 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     transform: `translate3d(${node.x}px, ${node.y}px, 0)`,
                     width: NODE_WIDTH,
                   }}
-                  className={`absolute top-0 left-0 bg-white rounded-xl border transition-shadow select-none ${
+                  className={`absolute top-0 left-0 bg-slate-900 rounded-xl border transition-shadow select-none ${
                     isSelected
-                      ? 'border-sky-600 ring-2 ring-sky-600/20 shadow-md z-20'
+                      ? 'border-sky-400 ring-2 ring-sky-400/25 shadow-lg z-20'
                       : isConnectingSource
-                      ? 'border-sky-500 ring-2 ring-sky-400/30 z-20'
-                      : `${colorStyle.border} hover:border-slate-400 shadow-xs z-10`
+                      ? 'border-sky-400 ring-2 ring-sky-400/30 z-20'
+                      : `${colorStyle.border} hover:border-slate-600 shadow-sm z-10`
                   }`}
                 >
                   {/* Left Color Accent Strip */}
@@ -1016,7 +1014,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
                   <div className="p-3.5 pl-4">
                     {/* Unboxed Metadata Row */}
-                    <div className="flex items-center justify-between gap-2 text-[11px] text-slate-500 mb-1">
+                    <div className="flex items-center justify-between gap-2 text-[11px] text-slate-400 mb-1">
                       <span className={`font-medium ${masteryMeta.colorClass}`}>
                         {masteryMeta.symbol} {masteryMeta.label}
                       </span>
@@ -1025,7 +1023,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                         {linkedCards.length > 0 && (
                           <>
                             <span aria-hidden="true">·</span>
-                            <span className={dueCount > 0 ? 'text-sky-700 font-medium' : ''}>
+                            <span className={dueCount > 0 ? 'text-sky-400 font-medium' : ''}>
                               {linkedCards.length} {linkedCards.length === 1 ? 'card' : 'cards'}
                             </span>
                           </>
@@ -1034,13 +1032,13 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     </div>
 
                     {/* Node Title */}
-                    <h3 className="text-sm font-semibold text-slate-900 leading-snug line-clamp-1">
+                    <h3 className="text-sm font-semibold text-slate-100 leading-snug line-clamp-1">
                       {node.label}
                     </h3>
 
                     {/* Summary Preview */}
-                    <p className="mt-1 text-xs text-slate-600 leading-relaxed line-clamp-2">
-                      {node.summary}
+                    <p className="mt-1 text-xs text-slate-400 leading-relaxed line-clamp-2">
+                      {node.summary || 'Click to add synthesis notes & mechanisms...'}
                     </p>
                   </div>
 
@@ -1050,7 +1048,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                       onMouseDown={(e) => e.stopPropagation()}
                       className="absolute -bottom-10 left-0 right-0 flex items-center justify-center gap-1 pointer-events-auto"
                     >
-                      <div className="flex items-center gap-1 px-2 py-1 bg-slate-900 text-white rounded-lg shadow-md text-[11px] font-medium">
+                      <div className="flex items-center gap-1 px-2 py-1 bg-slate-950 border border-slate-700 text-slate-100 rounded-lg shadow-lg text-[11px] font-medium">
                         <button
                           type="button"
                           onClick={() => handleAddNode(node)}
@@ -1060,7 +1058,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                           <GitBranch className="w-3 h-3 text-sky-400" />
                           + Branch
                         </button>
-                        <span className="text-slate-600">|</span>
+                        <span className="text-slate-700">|</span>
                         <button
                           type="button"
                           onClick={() =>
@@ -1070,7 +1068,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                           }
                           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded transition-colors whitespace-nowrap ${
                             connectingFromNodeId === node.id
-                              ? 'bg-sky-600 text-white'
+                              ? 'bg-sky-500 text-slate-950 font-semibold'
                               : 'hover:bg-slate-800'
                           }`}
                           title="Draw connection to another node"
@@ -1078,7 +1076,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                           <Link2 className="w-3 h-3 text-emerald-400" />
                           Link
                         </button>
-                        <span className="text-slate-600">|</span>
+                        <span className="text-slate-700">|</span>
                         <button
                           type="button"
                           onClick={() => handleGenerateFlashcardFromNode(node, 'qa')}
@@ -1097,27 +1095,27 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
           </div>
 
           {/* Bottom-Right Spatial Coordinates Indicator */}
-          <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-white/90 backdrop-blur-xs border border-slate-200 rounded-lg text-[11px] font-mono tabular-nums text-slate-500 pointer-events-none">
+          <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-slate-900/90 backdrop-blur-xs border border-slate-800 rounded-lg text-[11px] font-mono tabular-nums text-slate-400 pointer-events-none">
             X: {Math.round(-pan.x)} · Y: {Math.round(-pan.y)} · Scale: {Math.round(zoom * 100)}%
           </div>
         </div>
 
         {/* Right Concept Inspector & Flashcard Bridge Panel */}
-        <aside className="w-88 lg:w-96 bg-white border-l border-slate-200 flex flex-col h-full overflow-y-auto shrink-0">
+        <aside className="w-88 lg:w-96 bg-slate-900 border-l border-slate-800 flex flex-col h-full overflow-y-auto shrink-0">
           {selectedNode ? (
             <div className="p-5 space-y-6">
               {/* Header */}
-              <div className="flex items-start justify-between gap-2 pb-4 border-b border-slate-200">
+              <div className="flex items-start justify-between gap-2 pb-4 border-b border-slate-800">
                 <div>
-                  <div className="text-xs text-slate-500">Selected Concept Node</div>
-                  <h2 className="text-base font-semibold text-slate-900 mt-0.5">
+                  <div className="text-xs text-slate-400">Selected Concept Node</div>
+                  <h2 className="text-base font-semibold text-slate-100 mt-0.5">
                     {selectedNode.label}
                   </h2>
                 </div>
                 <button
                   type="button"
                   onClick={handleDeleteSelectedNode}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors"
+                  className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-rose-950/50 transition-colors"
                   title="Delete Node"
                   aria-label="Delete Node"
                 >
@@ -1128,33 +1126,34 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
               {/* Node Title & Summary Editor */}
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
                     Concept Label
                   </label>
                   <input
                     type="text"
                     value={selectedNode.label}
                     onChange={(e) => handleUpdateSelectedNode({ label: e.target.value })}
-                    className="w-full px-3 py-2 text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                    className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
-                    Synthesis Notes & Mechanism (Used for Blurting & Cards)
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
+                    Synthesis Notes &amp; Mechanism (Used for Blurting &amp; Cards)
                   </label>
                   <textarea
                     rows={4}
                     value={selectedNode.summary}
                     onChange={(e) => handleUpdateSelectedNode({ summary: e.target.value })}
-                    className="w-full px-3 py-2 text-xs leading-relaxed text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                    placeholder="Write the definition, mechanism, or core properties..."
+                    className="w-full px-3 py-2 text-xs leading-relaxed text-slate-200 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
 
                 {/* Mastery & Color */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
                       Recall Mastery
                     </label>
                     <select
@@ -1162,7 +1161,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                       onChange={(e) =>
                         handleUpdateSelectedNode({ mastery: e.target.value as NodeMastery })
                       }
-                      className="w-full px-2.5 py-1.5 text-xs font-medium text-slate-800 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
+                      className="w-full px-2.5 py-1.5 text-xs font-medium text-slate-200 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                     >
                       <option value="untested">○ Untested</option>
                       <option value="learning">◐ Learning</option>
@@ -1171,7 +1170,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 mb-1">
+                    <label className="block text-xs font-medium text-slate-300 mb-1">
                       Branch Accent
                     </label>
                     <div className="flex items-center gap-1.5 pt-1">
@@ -1182,7 +1181,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                           onClick={() => handleUpdateSelectedNode({ color: colorKey })}
                           className={`w-5 h-5 rounded-full ${COLOR_STYLES[colorKey].dot} ${
                             selectedNode.color === colorKey
-                              ? 'ring-2 ring-offset-2 ring-slate-900'
+                              ? 'ring-2 ring-offset-2 ring-offset-slate-900 ring-white'
                               : 'opacity-60 hover:opacity-100'
                           }`}
                           title={COLOR_STYLES[colorKey].label}
@@ -1195,12 +1194,12 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
               </div>
 
               {/* Target Key Terms for Blurt Verification */}
-              <div className="pt-4 border-t border-slate-200">
+              <div className="pt-4 border-t border-slate-800">
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-medium text-slate-700">
+                  <label className="text-xs font-medium text-slate-300">
                     Key Terms (Auto-Checked in Blurt Sessions)
                   </label>
-                  <span className="text-[11px] font-mono tabular-nums text-slate-400">
+                  <span className="text-[11px] font-mono tabular-nums text-slate-500">
                     {selectedNode.keyTerms.length} terms
                   </span>
                 </div>
@@ -1211,22 +1210,22 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     placeholder="Add expected keyword..."
                     value={newKeyTermInput}
                     onChange={(e) => setNewKeyTermInput(e.target.value)}
-                    className="flex-1 px-2.5 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                    className="flex-1 px-2.5 py-1.5 text-xs text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                   <button
                     type="submit"
-                    className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors whitespace-nowrap"
+                    className="px-3 py-1.5 text-xs font-medium text-slate-200 bg-slate-800 border border-slate-700 rounded-lg hover:bg-slate-700 transition-colors whitespace-nowrap"
                   >
                     Add
                   </button>
                 </form>
 
                 {selectedNode.keyTerms.length > 0 ? (
-                  <div className="flex flex-wrap items-center gap-y-1 text-xs text-slate-600">
+                  <div className="flex flex-wrap items-center gap-y-1 text-xs text-slate-300">
                     {selectedNode.keyTerms.map((term, i) => (
                       <React.Fragment key={term}>
                         {i > 0 && (
-                          <span className="mx-1.5 text-slate-300" aria-hidden="true">
+                          <span className="mx-1.5 text-slate-600" aria-hidden="true">
                             ·
                           </span>
                         )}
@@ -1235,7 +1234,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                           <button
                             type="button"
                             onClick={() => handleRemoveKeyTerm(term)}
-                            className="text-slate-400 hover:text-rose-600"
+                            className="text-slate-500 hover:text-rose-400"
                             title={`Remove "${term}"`}
                           >
                             <X className="w-3 h-3" />
@@ -1245,19 +1244,19 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     ))}
                   </div>
                 ) : (
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500">
                     No key terms yet. Add keywords you want verified during active recall blurts.
                   </p>
                 )}
               </div>
 
               {/* Spaced Repetition Flashcard Generator Bridge */}
-              <div className="pt-4 border-t border-slate-200 space-y-3">
+              <div className="pt-4 border-t border-slate-800 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-900">
+                  <span className="text-xs font-semibold text-slate-100">
                     Convert Node to Flashcard
                   </span>
-                  <span className="text-xs text-slate-500 tabular-nums">
+                  <span className="text-xs text-slate-400 tabular-nums">
                     {(nodeFlashcardsMap[selectedNode.id] || []).length} linked
                   </span>
                 </div>
@@ -1266,21 +1265,21 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                   <button
                     type="button"
                     onClick={() => handleGenerateFlashcardFromNode(selectedNode, 'qa')}
-                    className="px-2.5 py-2 text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors text-center whitespace-nowrap"
+                    className="px-2.5 py-2 text-xs font-medium text-slate-200 bg-slate-950 border border-slate-800 rounded-lg hover:bg-slate-800 transition-colors text-center whitespace-nowrap"
                   >
                     + Q&amp;A Card
                   </button>
                   <button
                     type="button"
                     onClick={() => handleGenerateFlashcardFromNode(selectedNode, 'cloze')}
-                    className="px-2.5 py-2 text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors text-center whitespace-nowrap"
+                    className="px-2.5 py-2 text-xs font-medium text-slate-200 bg-slate-950 border border-slate-800 rounded-lg hover:bg-slate-800 transition-colors text-center whitespace-nowrap"
                   >
                     + Cloze Card
                   </button>
                   <button
                     type="button"
                     onClick={() => handleGenerateFlashcardFromNode(selectedNode, 'branch')}
-                    className="px-2.5 py-2 text-xs font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors text-center whitespace-nowrap"
+                    className="px-2.5 py-2 text-xs font-medium text-slate-200 bg-slate-950 border border-slate-800 rounded-lg hover:bg-slate-800 transition-colors text-center whitespace-nowrap"
                   >
                     + Branch Card
                   </button>
@@ -1289,27 +1288,27 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                 {/* Linked Flashcards Preview */}
                 {(nodeFlashcardsMap[selectedNode.id] || []).length > 0 && (
                   <div className="space-y-2 pt-2">
-                    <div className="text-[11px] font-medium text-slate-500">
+                    <div className="text-[11px] font-medium text-slate-400">
                       Linked Flashcards for This Concept
                     </div>
-                    <div className="divide-y divide-slate-200 border border-slate-200 rounded-lg bg-slate-50/50">
+                    <div className="divide-y divide-slate-800 border border-slate-800 rounded-lg bg-slate-950/60">
                       {(nodeFlashcardsMap[selectedNode.id] || []).map((card) => {
                         const dueInfo = formatDueRelative(card.dueDate);
                         return (
                           <div key={card.id} className="p-2.5 text-xs space-y-1">
-                            <div className="flex items-center justify-between text-[11px] text-slate-500 tabular-nums">
+                            <div className="flex items-center justify-between text-[11px] text-slate-400 tabular-nums">
                               <span>
                                 {card.type.toUpperCase()} · Ease {card.easeFactor.toFixed(2)}
                               </span>
                               <span
                                 className={
-                                  dueInfo.isDue ? 'text-sky-700 font-medium' : 'text-slate-500'
+                                  dueInfo.isDue ? 'text-sky-400 font-medium' : 'text-slate-500'
                                 }
                               >
                                 {dueInfo.label}
                               </span>
                             </div>
-                            <p className="text-slate-800 line-clamp-2 font-medium">
+                            <p className="text-slate-200 line-clamp-2 font-medium">
                               {card.front}
                             </p>
                           </div>
@@ -1319,7 +1318,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     <button
                       type="button"
                       onClick={() => onNavigateToFlashcards(activeMap?.topicId)}
-                      className="inline-flex items-center gap-1 text-xs font-medium text-sky-700 hover:text-sky-800"
+                      className="inline-flex items-center gap-1 text-xs font-medium text-sky-400 hover:text-sky-300"
                     >
                       <span>Study topic flashcards</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -1330,17 +1329,17 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
             </div>
           ) : selectedEdge ? (
             <div className="p-5 space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
                 <div>
-                  <div className="text-xs text-slate-500">Selected Connection</div>
-                  <h2 className="text-sm font-semibold text-slate-900 mt-0.5">
+                  <div className="text-xs text-slate-400">Selected Connection</div>
+                  <h2 className="text-sm font-semibold text-slate-100 mt-0.5">
                     Relationship Edge
                   </h2>
                 </div>
                 <button
                   type="button"
                   onClick={handleDeleteSelectedEdge}
-                  className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50"
+                  className="p-1.5 text-slate-500 hover:text-rose-400 rounded-lg hover:bg-rose-950/50"
                   title="Delete Connection"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -1348,7 +1347,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
                   Edge Label (Relationship Verb)
                 </label>
                 <input
@@ -1356,12 +1355,12 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                   value={selectedEdge.label || ''}
                   onChange={(e) => handleUpdateSelectedEdge({ label: e.target.value })}
                   placeholder="e.g., phosphorylates, triggers, inhibits"
-                  className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                  className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
                   Line Style
                 </label>
                 <div className="flex items-center gap-2">
@@ -1370,8 +1369,8 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     onClick={() => handleUpdateSelectedEdge({ style: 'solid' })}
                     className={`flex-1 py-1.5 text-xs font-medium rounded-lg border ${
                       selectedEdge.style !== 'dashed'
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-700 border-slate-200'
+                        ? 'bg-sky-400 text-slate-950 border-sky-400 font-semibold'
+                        : 'bg-slate-950 text-slate-300 border-slate-800'
                     }`}
                   >
                     Solid Direct
@@ -1381,8 +1380,8 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     onClick={() => handleUpdateSelectedEdge({ style: 'dashed' })}
                     className={`flex-1 py-1.5 text-xs font-medium rounded-lg border ${
                       selectedEdge.style === 'dashed'
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-slate-700 border-slate-200'
+                        ? 'bg-sky-400 text-slate-950 border-sky-400 font-semibold'
+                        : 'bg-slate-950 text-slate-300 border-slate-800'
                     }`}
                   >
                     Dashed Cross-Link
@@ -1391,8 +1390,8 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
               </div>
             </div>
           ) : (
-            <div className="p-6 text-xs text-slate-500 space-y-2">
-              <p className="font-medium text-slate-700">No Node Selected</p>
+            <div className="p-6 text-xs text-slate-400 space-y-2">
+              <p className="font-medium text-slate-200">No Node Selected</p>
               <p>
                 Click any node on the canvas to edit its synthesis notes, key terms, or generate
                 spaced repetition flashcards.
@@ -1402,14 +1401,14 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
           {/* Map Metadata Footer */}
           {activeMap && (
-            <div className="mt-auto p-5 border-t border-slate-200 bg-slate-50/60 space-y-3">
+            <div className="mt-auto p-5 border-t border-slate-800 bg-slate-950/50 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-slate-600">Map Settings</span>
+                <span className="text-xs font-medium text-slate-400">Map Settings</span>
                 {!confirmDeleteMap ? (
                   <button
                     type="button"
                     onClick={() => setConfirmDeleteMap(true)}
-                    className="text-xs text-slate-400 hover:text-rose-600 transition-colors"
+                    className="text-xs text-slate-500 hover:text-rose-400 transition-colors"
                   >
                     Delete Map
                   </button>
@@ -1421,14 +1420,14 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                         onDeleteMindMap(activeMap.id);
                         setConfirmDeleteMap(false);
                       }}
-                      className="text-xs font-semibold text-rose-600 hover:underline"
+                      className="text-xs font-semibold text-rose-400 hover:underline"
                     >
                       Confirm Delete
                     </button>
                     <button
                       type="button"
                       onClick={() => setConfirmDeleteMap(false)}
-                      className="text-xs text-slate-500 hover:text-slate-800"
+                      className="text-xs text-slate-400 hover:text-slate-200"
                     >
                       Cancel
                     </button>
@@ -1441,7 +1440,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                 onChange={(e) =>
                   onSaveMindMap({ ...activeMap, title: e.target.value, updatedAt: Date.now() })
                 }
-                className="w-full px-2.5 py-1.5 text-xs font-medium text-slate-800 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
+                className="w-full px-2.5 py-1.5 text-xs font-medium text-slate-200 bg-slate-900 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
               />
             </div>
           )}
@@ -1450,14 +1449,14 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
       {/* Create New Mind Map Modal */}
       {showNewMapForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-xs p-4">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-xl shadow-lg p-6 space-y-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-xl shadow-xl p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold text-slate-900">Create New Mind Map</h3>
+              <h3 className="text-base font-semibold text-slate-100">Create New Mind Map</h3>
               <button
                 type="button"
                 onClick={() => setShowNewMapForm(false)}
-                className="p-1 text-slate-400 hover:text-slate-700"
+                className="p-1 text-slate-400 hover:text-slate-200"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -1465,7 +1464,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
 
             <form onSubmit={handleCreateNewMindMap} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
                   Mind Map Title
                 </label>
                 <input
@@ -1474,18 +1473,18 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                   placeholder="e.g., Krebs Cycle & Allosteric Regulation"
                   value={newMapTitle}
                   onChange={(e) => setNewMapTitle(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                  className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
                   Study Topic / Deck
                 </label>
                 <select
                   value={newMapTopicId}
                   onChange={(e) => setNewMapTopicId(e.target.value)}
-                  className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                  className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 >
                   {topics.map((t) => (
                     <option key={t.id} value={t.id}>
@@ -1496,9 +1495,9 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                 </select>
               </div>
 
-              {newMapTopicId === '__new__' && (
+              {(newMapTopicId === '__new__' || topics.length === 0) && (
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
                     New Topic Title
                   </label>
                   <input
@@ -1507,13 +1506,13 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                     placeholder="e.g., Molecular Immunology"
                     value={newTopicTitleInput}
                     onChange={(e) => setNewTopicTitleInput(e.target.value)}
-                    className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                    className="w-full px-3 py-2 text-sm text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-slate-300 mb-1">
                   Core Thesis / Summary
                 </label>
                 <textarea
@@ -1521,7 +1520,7 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                   placeholder="Brief overview of what this spatial map covers..."
                   value={newMapDescription}
                   onChange={(e) => setNewMapDescription(e.target.value)}
-                  className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-sky-600"
+                  className="w-full px-3 py-2 text-xs text-slate-100 bg-slate-950 border border-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
               </div>
 
@@ -1529,13 +1528,13 @@ export const MindMapWorkspace: React.FC<MindMapWorkspaceProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowNewMapForm(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-900"
+                  className="px-4 py-2 text-xs font-medium text-slate-400 hover:text-slate-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-semibold text-white bg-sky-600 rounded-lg hover:bg-sky-700 transition-colors"
+                  className="px-4 py-2 text-xs font-semibold text-slate-950 bg-sky-400 rounded-lg hover:bg-sky-300 transition-colors"
                 >
                   Create Mind Map
                 </button>

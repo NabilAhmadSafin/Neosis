@@ -9,11 +9,13 @@
 
   body {
     font-family: var(--font-sans);
-    background-color: #F8FAFC;
-    color: #0F172A;
+    background-color: #090D16;
+    color: #F1F5F9;
+    letter-spacing: 0.01em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    color-scheme: dark;
   }
 
   h1, h2, .font-display {
@@ -28,7 +30,7 @@
 }
 
 .mindmap-grid-bg {
-  background-color: #F8FAFC;
-  background-image: radial-gradient(#CBD5E1 1.25px, transparent 1.25px);
+  background-color: #090D16;
+  background-image: radial-gradient(#1E293B 1.25px, transparent 1.25px);
 }
 
