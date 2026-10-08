@@ -1,0 +1,6 @@
+{
+  "name": "Noesis — Mind Mapping, Spaced Repetition & Active Recall Workbench",
+  "description": "Personal cognitive productivity web application featuring interactive spatial mind mapping, SM-2 spaced repetition flashcards, and timed active recall blurting sessions stored locally in IndexedDB.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
